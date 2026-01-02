@@ -3,29 +3,33 @@ import signal
 import sys
 from core.stt import record_until_silence, transcribe_audio
 from core.llm import chat_with_llm
+from core.tts import TTS
+
+# Initialize TTS once
+tts = TTS()
 
 def signal_handler(sig, frame):
-    print("\nFine. Leave. See if I care.")
+    tts.speak("Fine. Leave. See if I care.")
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 
 def main():
-    print("Natasha is listening. Say anything (or Ctrl+C to quit)...")
+    tts.speak("Natasha Monday is awake. Say my name to activate.")
+    print("Natasha is listening. Say 'Natasha' or 'Monday'... (Ctrl+C to quit)")
     print("-" * 60)
     
     while True:
         try:
-            # Record voice (in-memory, VAD-trimmed, max 10s)
+            # Record voice (in-memory, up to 10s, stops after 1s silence)
             audio = record_until_silence()
-            
             if len(audio) == 0:
                 continue
                 
             # Transcribe
             text = transcribe_audio(audio)
             if not text:
-                print("Did not understand. Try again.")
+                tts.speak("Did not understand. Try again.")
                 continue
                 
             print(f"You said: '{text}'")
@@ -33,7 +37,7 @@ def main():
             # Wake word filtering
             lower_text = text.lower()
             if not (lower_text.startswith("natasha") or lower_text.startswith("monday")):
-                print("Ignoring (no wake word). Say 'Natasha' or 'Monday' to activate.")
+                print("Ignoring (no wake word).")
                 continue
             
             # Strip wake word
@@ -49,10 +53,15 @@ def main():
             print("Processing...")
             response = chat_with_llm(clean_text)
             print(f"Natasha: {response}")
+            
+            # Speak response
+            tts.speak(response)
             print("-" * 60)
             
         except Exception as e:
-            print(f"Error: {e}")
+            error_msg = f"Error: {e}"
+            print(error_msg)
+            tts.speak("Ugh. My brain froze.")
 
 if __name__ == "__main__":
     main()
