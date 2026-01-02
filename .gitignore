@@ -1,0 +1,47 @@
+﻿# Virtual Environments
+venv/
+env/
+MondayVenv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Audio & Temp (in-memory buffers should never be saved, but just in case)
+*.wav
+*.mp3
+*.raw
+audio_*.tmp
+temp_audio/
+
+# Logs & Data
+logs/
+*.log
+data/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Ollama / LLM Models (NEVER commit these!)
+models/
+*.gguf
+*.bin
+
+# Environment variables (if you add them later)
+.env
+.env.local
+
+# OS junk
+Thumbs.db
+ehthumbs.db
